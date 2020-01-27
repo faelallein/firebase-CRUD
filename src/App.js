@@ -13,7 +13,7 @@ function App() {
     GetFire()
       .then(res => {
         let auxID = res.docs.map(m => m.id)
-        let aux = res.docs.map(map => map.data())
+        let aux = res.docs.map(map => map.data())        
         let auxView = aux.map((e , i) => {
           return <tr key={auxID[i]}>
             <td>{e.nome}</td>
