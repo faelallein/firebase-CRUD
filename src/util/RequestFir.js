@@ -23,7 +23,10 @@ export function DeleteFire(id) {
     return db.collection("agenda").doc(id).delete()
 }
 
-export function OrdenaFire() {
-    const db = firebase.firestore()
-    return db.collection("agenda").where("nome", "==", "KOF 9")
+export function OrdenaFire(busca) {
+    return new Promise((resolve, reject) => {
+        const db = firebase.firestore()
+        const data = db.collection("agenda").where("nome", "==", busca).get()
+        resolve(data)
+    })
 }
