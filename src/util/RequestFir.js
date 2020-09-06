@@ -1,32 +1,45 @@
 import firebase from '../firebase'
+const database = firebase.database();
 
-export function GetFire() {
-    return new Promise((resolve, reject) => {
-            const db = firebase.firestore()
-            const data = db.collection("agenda").get()
-            resolve(data)
-    })
-}
+export const requestFirebase = {
+    add: (col, data, key) => {
+        return new Promise((resolve, reject) => {
+            const fref = database.ref()
 
-export function PostFire(contato) {
-    const db = firebase.firestore()
-    db.collection("agenda").add(contato)
-}
+            let update = {}
+            update[`/${col}/` + key] = data
 
-export function UpdateFire(id, contato) {    
-    const db = firebase.firestore()
-    return db.collection("agenda").doc(id).update(contato)
-}
+            fref.update(update)
+            resolve('Add')
+        })
+    },
+    update: (ref, data) => {
+        return new Promise((resolve, reject) => {
+            const fref = database.ref()
 
-export function DeleteFire(id) {
-    const db = firebase.firestore()
-    return db.collection("agenda").doc(id).delete()
-}
+            let update = {}
+            update[ref] = data
 
-export function OrdenaFire(busca) {
-    return new Promise((resolve, reject) => {
-        const db = firebase.firestore()
-        const data = db.collection("agenda").where("nome", "==", busca).get()
-        resolve(data)
-    })
+            fref.update(update)
+            resolve('Update')
+        })
+    },
+    get: (col) => {
+        return new Promise((resolve, reject) => {
+            const fref = database.ref(col)
+
+            fref.once('value').then(s => {
+                let value = s.val()
+                resolve(value)
+            })
+        })
+    },
+    del: (ref) => {
+        return new Promise((resolve, reject) => {
+            const fref = database.ref(`/tasks/${ref}`)
+
+            fref.remove()
+            resolve('Deletado')
+        })
+    }
 }
