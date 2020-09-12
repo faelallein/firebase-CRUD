@@ -1,12 +1,12 @@
 # firebase-CRUD
 
-Uma simples aplicação Todo App feita em react, utilizando o potencial do firebase realtime database e firebase hosting.
+Uma simples aplicação Todo App feita em ReactJS, utilizando o potencial do firebase realtime database e firebase hosting.
 Aplicação foi feita em cima do framework Bootstrap 
 
-Link do app rodando hostiado pelo firebase: https://todo-list-17248.web.app/
+Link do app rodando hospedado pelo firebase: https://todo-list-17248.web.app/
  
 # npm install
-Install all the dependencies required.
+Instala todas as dependências.
 
 # npm start
-Runs the frontend app.
+Roda a aplicação frontend.
