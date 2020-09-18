@@ -1,4 +1,4 @@
-import React from 'react';
+import React, { useState } from 'react';
 import Table from 'react-bootstrap/Table'
 import Container from 'react-bootstrap/Container'
 import Col from 'react-bootstrap/Col'
@@ -11,10 +11,14 @@ import DoneTask from './components/DoneTask'
 
 function ListTask() {
     const { tasks, setTasks } = useTasks()
+    const [ taskList, setTaskList ] = useState([])
 
     React.useEffect(() => {
         //copia os dados do firebase para a imagem
-        requestFirebase.get().then((s) => {setTasks(s.tasks)})
+        //requestFirebase.get().then((s) => {setTasks(s.tasks)})
+
+        console.log(Object.values(tasks)[1])
+
     },[setTasks])
 
     return <Container style={{height: 750, overflowY:'scroll'}}>

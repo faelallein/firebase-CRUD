@@ -2,23 +2,12 @@ import firebase from '../firebase'
 const database = firebase.database();
 
 export const requestFirebase = {
-    add: (col, data, key) => {
-        return new Promise((resolve, reject) => {
-            const fref = database.ref()
-
-            let update = {}
-            update[`/${col}/` + key] = data
-
-            fref.update(update)
-            resolve('Add')
-        })
-    },
     update: (ref, data) => {
         return new Promise((resolve, reject) => {
             const fref = database.ref()
 
             let update = {}
-            update[ref] = data
+            update[`/listsUsers/` + ref] = data
 
             fref.update(update)
             resolve('Update')
