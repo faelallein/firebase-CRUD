@@ -1,25 +1,24 @@
-import React, { useState } from 'react';
+import React, { useEffect, useState } from 'react';
 import Table from 'react-bootstrap/Table'
 import Container from 'react-bootstrap/Container'
 import Col from 'react-bootstrap/Col'
 import Row from 'react-bootstrap/Row'
-import { requestFirebase } from '../../util/RequestFir'
 import { useTasks } from '../../context/tasks'
+import { LocalStorage } from '../../util/localStorage'
 //Component
 import Task from './components/Task'
 import DoneTask from './components/DoneTask'
 
 function ListTask() {
-    const { tasks, setTasks } = useTasks()
+    const { tasks } = useTasks()
     const [ taskList, setTaskList ] = useState([])
 
-    React.useEffect(() => {
-        //copia os dados do firebase para a imagem
-        //requestFirebase.get().then((s) => {setTasks(s.tasks)})
-
-        console.log(Object.values(tasks)[1])
-
-    },[setTasks])
+    useEffect(() => {
+        if (tasks !== false ) {
+            setTaskList(Object.values(tasks)[0].tasks)
+            LocalStorage.updateLocalStorage('todoApp', tasks)
+        }
+    },[tasks])
 
     return <Container style={{height: 750, overflowY:'scroll'}}>
         <Row fluid="md" className="justify-content-md-center">
@@ -34,13 +33,13 @@ function ListTask() {
                     </tr>
                 </thead>
                 <tbody>
-                        {tasks !== '' ? Object.values(tasks).reverse().map((map, index) => {
+                        {taskList !== false ? taskList.map((map, index) => {
                             if(map.do === true){
                                 //retorno da tarefa feita
-                                return <DoneTask key={Object.keys(tasks).reverse()[index]} keyId={Object.keys(tasks).reverse()[index]} dataUnq={map} />} 
+                                return <DoneTask key={index} keyId={index} dataUnq={map} />} 
                                 else {
                                 //retorno da tarefa por fazer 
-                                return <Task key={Object.keys(tasks).reverse()[index]} keyId={Object.keys(tasks).reverse()[index]} dataUnq={map} />}  
+                                return <Task key={index} keyId={index} dataUnq={map} />}  
                             }) : 
                         <tr>
                             <td>Vazio</td>
