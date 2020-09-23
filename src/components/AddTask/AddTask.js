@@ -1,5 +1,4 @@
-import React from 'react';
-import firebase from '../../firebase'
+import React, {useEffect} from 'react';
 import Form from 'react-bootstrap/Form'
 import Container from 'react-bootstrap/Container'
 import Col from 'react-bootstrap/Col'
@@ -7,33 +6,39 @@ import Row from 'react-bootstrap/Row'
 import Button from 'react-bootstrap/Button'
 import { requestFirebase } from '../../util/RequestFir'
 import { useTasks } from '../../context/tasks'
+import { LocalStorage } from '../../util/localStorage'
 
 function AddTask() {
-    const { tasks, setTasks } = useTasks() 
+    const { tasks, setTasks } = useTasks()
+    const [ key, setKey ] = React.useState(Object.keys(tasks)[0])
     const [ task , setTask ] = React.useState({
         task : '',
         do : false
     })
 
-    const add = async () => {
-        //cria key direto do firebase
-        let key = await firebase.database().ref().child('tasks').push().key
-        
+    const add = () => {
         //atualiza o contexto tasks
         let auxTasks = tasks
-        auxTasks[key] = task
+        auxTasks[key].tasks.push(task) 
         setTasks({ ...auxTasks })        
 
         //adiciona ao firebase
-        await requestFirebase.update(`/tasks/${key}`, task)
+        requestFirebase.update(key, tasks[key])
         
+        //atualiza o localstorage
+        LocalStorage.updateLocalStorage('todoApp', tasks)
+
         //limpa o input e o state
         document.querySelector("#inputTask").value = ""
         setTask({
-            task: '',
-            do: false
+             task: '',
+             do: false
         })
     }
+
+    useEffect(() => {
+        setKey(Object.keys(tasks)[0])
+    }, [tasks])
 
     return <Container>
             <Row fluid="md" className="justify-content-md-center">

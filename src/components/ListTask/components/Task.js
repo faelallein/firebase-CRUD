@@ -1,73 +1,43 @@
-import React from 'react';
+import React, { useState } from 'react';
 //Bootstrap
 import Button from 'react-bootstrap/Button'
-import Form from 'react-bootstrap/Form'
 //Util e Context
 import { requestFirebase } from '../../../util/RequestFir'
 import { useTasks } from '../../../context/tasks'
+import EditForm from './EditForm'
+import DeleteButton from './DeleteButton'
 
 
 function Task({ keyId, dataUnq }) {
     const { tasks, setTasks } = useTasks()
-    const [ task, setTask ] = React.useState(dataUnq.task)
+    const [ key ] = useState(Object.keys(tasks)[0])
 
-    const deletar = (ref) => {
-        //deleta o item do firebase
-        requestFirebase.del(ref)
-
-        //deleta o item da imagem
-        let auxTasks = tasks
-        delete auxTasks[ref]
-        setTasks({ ...auxTasks })
-    }
-
-    const done = (ref, data) => {
-        //edita o item do firebase
-        requestFirebase.update(`/tasks/${ref}/`, { ...data, do: true })
-
+    const done = () => {
         //edit o item da imagem
-        let auxTasks = tasks
-        auxTasks[ref].do = true
-        setTasks({ ...auxTasks })
+        let auxTask = tasks
+        auxTask[key].tasks[keyId].do = true
+        setTasks({ ...auxTask })
+
+        //edita o item do firebase
+        requestFirebase.update(`/${key}/`, { ...auxTask[key] })
     }
     
-    const openEdit = (ref) => {
+    const openEdit = () => {
         //Liga a edição
         let auxTask = tasks
-        auxTask[ref].edit = true
+        auxTask[key].tasks[keyId].edit = true
         setTasks({ ...auxTask })
     }
-
-    const closeEdit = (ref, data) => {
-        //atualiza a imagem e desliga a edição
-        let auxTask = tasks
-        delete auxTask[ref].edit
-        auxTask[ref].task = task
-        setTasks({ ...auxTask })
-
-        //edita o item do firebase
-        requestFirebase.update(`/tasks/${ref}/`, { ...data, task: task })
-    }
-
-    const handleEdit = (value) => {
-        setTask(value)
-    }
-
 
     if(dataUnq.edit !== true){
         return <tr key={keyId}>
             <td>{dataUnq.task}</td>
-            <td><Button variant="info" onClick={() => done(keyId, dataUnq)}>Do</Button></td>
-            <td><Button variant="warning" onClick={() => openEdit(keyId)}>Edit</Button></td>
-            <td><Button variant="danger" onClick={() => deletar(keyId)}>Delete</Button></td>
+            <td><Button variant="info" onClick={() => done()}>Do</Button></td>
+            <td><Button variant="warning" onClick={() => openEdit()}>Edit</Button></td>
+            <td><DeleteButton keyId={keyId} /></td>
         </tr>;
     }else{
-        return <tr key={keyId}>
-            <td colSpan="3">
-                <Form.Control type="text" value={task} onChange={e => {handleEdit(e.target.value)}} />
-            </td>            
-            <td><Button variant="warning" onClick={() => closeEdit(keyId, dataUnq)}>Edit</Button></td>
-        </tr>
+        return <EditForm keyId={keyId} dataUnq={dataUnq}/>
     }
     
 }
